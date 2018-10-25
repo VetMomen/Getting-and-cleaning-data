@@ -104,3 +104,42 @@ writeNamedRegion(object = wb,data = curr,name = name)
 # Save the workbook (this actually writes the file to disk)
 
 saveWorkbook(object = wb,file = paste('./data sets',wbFileName,sep = '/'))
+
+
+#Advanced 
+
+wb<-loadWorkbook(paste('./data sets',wbFileName,sep = '/'))
+
+csHeader<-createCellStyle(object = wb,name = 'Header')
+setFillPattern(object = csHeader,fill = XLC$FILL.SOLID_FOREGROUND)
+setFillForegroundColor(object = csHeader,XLC$COLOR.GREY_25_PERCENT)
+
+csDate<-createCellStyle(object = wb,name = 'Date')
+setDataFormat(object = csDate,format = 'yyyy-mm-dd')
+
+csHighlight<-createCellStyle(object = wb,name = 'HighLight')
+setFillPattern(object = csHighlight,XLC$FILL.SOLID_FOREGROUND)
+setFillForegroundColor(object = csHighlight,color = XLC$COLOR.CORNFLOWER_BLUE)
+
+setCellStyle(object = wb,sheet = sheet,row = 1,col = seq(length.out=ncol(curr)),cellstyle = csHeader)
+
+allrows<-seq(length=nrow(curr))+1
+setCellStyle(object = wb,sheet = sheet,row = allrows,col = 1,cellstyle = csDate)
+
+setColumnWidth(object = wb,sheet = sheet,column = 1,width = 2800)
+idx <- rollapply(curr[, -1], width = 2,
+                  FUN = function(x) abs(x[2] / x[1] - 1),
+                  by.column = TRUE) > 0.02
+idx <- rbind(rep(FALSE, ncol(idx)), idx)
+widx <- lapply(as.data.frame(idx), which)
+for (i in seq(along = widx)) {
+         if (length(widx[[i]]) > 0) {
+                 setCellStyle(wb, sheet = sheet, row = widx[[i]] + 1, col = i + 1,
+                                cellstyle = csHighlight)
+                 }
+        
+                 # Note:
+                 # +1 for row since there is a header row
+                 # +1 for column since the first column is the time column
+                 }   
+saveWorkbook(object = wb,file = './data sets/swiss_franc.xlsx')
