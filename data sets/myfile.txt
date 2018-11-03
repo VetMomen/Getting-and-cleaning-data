@@ -1,0 +1,12 @@
+{
+  "args": {}, 
+  "headers": {
+    "Accept": "application/json, text/xml, application/xml, */*", 
+    "Accept-Encoding": "gzip, deflate", 
+    "Connection": "close", 
+    "Host": "httpbin.org", 
+    "User-Agent": "libcurl/7.59.0 r-curl/3.2 httr/1.3.1"
+  }, 
+  "origin": "156.194.43.209", 
+  "url": "http://httpbin.org/get"
+}
