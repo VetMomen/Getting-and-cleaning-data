@@ -54,3 +54,16 @@ all_data2<-bind_rows(all_data)
 unique(all_data2$names)
 
 writeWorksheetToFile(file = './data sets/otlob.xlsx',data = all_data2,sheet = 'otlob')
+
+##################################
+url<-'https://www.otlob.com/restaurants'
+cast<-read_html(url)%>%html_nodes('.vendor__name')%>%html_text(trim = T)
+
+
+s<-html_session(url = url)
+
+new<-list()
+for(i in cast[1:30]){
+        pages<-s%>%follow_link(i)%>%read_html()
+        new[[i]]<-pages%>%html_nodes('.menu-item__variation__price , .menu-item__title')%>%html_text(trim = T)
+}
