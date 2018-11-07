@@ -67,3 +67,35 @@ for(i in cast[1:30]){
         pages<-s%>%follow_link(i)%>%read_html()
         new[[i]]<-pages%>%html_nodes('.menu-item__variation__price , .menu-item__title')%>%html_text(trim = T)
 }
+###################################################################
+##by RSelenium
+
+rD<-rsDriver(browser = 'firefox')
+RemDr<-rD$client
+RemDr$setImplicitWaitTimeout(10000)
+RemDr$navigate('https://www.otlob.com/restaurants')
+
+load<-function(){
+        body0<-NULL
+        while(is.null(body0)){
+                body0<-RemDr$findElement(using ='xpath',value = '/html/body' )
+                body0$sendKeysToElement(list(key='end'))
+        }
+}
+
+
+repeat {
+        startTime <- Sys.time()
+        load()
+        sleepTime <- startTime + 2 - Sys.time()
+        if (sleepTime > 0)
+                Sys.sleep(sleepTime)
+}
+
+
+res_name<-RemDr$findElements(using = 'css',value = 'html.desktop.js body.whitelabel.whitelabel-on-main-domain.no-foodpanda.eg div.page-wrapper.js-sticky-height-calculate-container div.content-wrapper main.js-sticky-height-calculate-container div.container div.vendors div.vendors__inner.js-sticky-height-calculate-container form.js-vendor-list-form div.row section.vendor-list.js-infscroll-container section.js-infscroll-load-more-here article.vendor.list.js-vendor-list-vendor-panel a.vendor__inner.js-fire-click-tracking-event div.vendor__details div.vendor__title span.vendor__name')
+
+res_names<-list()
+res_names<-c(unlist(sapply(res_name,function(x){
+        x$getElementText()
+})))
